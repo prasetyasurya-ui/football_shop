@@ -3,7 +3,7 @@ import uuid
 
 # Create your models here.
 
-class Item(models.Model):
+class Product(models.Model):
     CATEGORY_CHOICES = [
         ('baju', 'Baju'),
         ('celana', 'Celana'),
