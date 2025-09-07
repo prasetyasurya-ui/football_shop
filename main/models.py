@@ -8,7 +8,7 @@ class Item(models.Model):
         ('baju', 'Baju'),
         ('celana', 'Celana'),
         ('topi', 'Topi'),
-        ('sepatu', 'Sepatu'),fads
+        ('sepatu', 'Sepatu'),
         ('update', 'Update')
     ]
 
@@ -19,7 +19,7 @@ class Item(models.Model):
     thumbnail = models.URLField(blank=True, null=True)
     category = models.CharField(max_length=15, choices=CATEGORY_CHOICES, default='update')
     is_featured = models.BooleanField(default=False)
-    is_wanted = models.BooleanFiefasdld(default=False)
+    is_wanted = models.BooleanField(default=False)
     wishlists = models.PositiveIntegerField(default = 0);
 
     def __str__(self):
