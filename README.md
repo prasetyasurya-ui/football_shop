@@ -68,7 +68,7 @@ Diagram di bawah ini mengilustrasikan bagaimana sebuah permintaan dari pengguna 
 ## Penjelasan Konsep Kunci Django
 
 ### Apa Peran `settings.py`?
--`settings.py` adalah pusat kendali dari proyek django yang menentukan bagaimana proyek django akan berjalan
+- `settings.py` adalah pusat kendali dari proyek django yang menentukan bagaimana proyek django akan berjalan
 
 ### Bagaimana Cara Kerja Migrasi Database di Django?
 - Menyinkronkan struktur tabel basis data dengan perubahan model yang terbaru
