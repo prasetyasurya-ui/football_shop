@@ -1,10 +1,10 @@
-# ⚽ Football Shop - Proyek Django
+⚽ Football Shop - Proyek Django
 
 Selamat datang di repositori Football Shop, sebuah aplikasi web e-commerce sederhana yang dibangun menggunakan framework Django. Proyek ini dikembangkan sebagai bagian dari tugas mata kuliah Pengembangan Berbasis Platform (PBP).
 
 **[🔗 Kunjungi Aplikasi yang Sudah Deploy](https://prasetya-surya-footballshop.pbp.cs.ui.ac.id/)**
 
-## 📝 Langkah-Langkah Implementasi
+## Langkah-Langkah Implementasi
 
 Berikut adalah rincian langkah demi langkah dalam membangun proyek ini dari awal hingga deployment.
 
@@ -37,10 +37,9 @@ Aplikasi yang sudah selesai dikembangkan kemudian di-deploy agar bisa diakses se
 
 ---
 
-## 🔄 Bagan Alur Request-Response Django
+## Bagan Alur Request-Response Django
 
 Diagram di bawah ini mengilustrasikan bagaimana sebuah permintaan dari pengguna (client) diproses oleh aplikasi Django hingga menghasilkan respons yang ditampilkan kembali ke pengguna.
-
 
 
 **[Lihat Bagan Interaktif di Draw.io](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&title=Untitled%20Diagram.drawio&dark=auto#R%3Cmxfile%3E%3Cdiagram%20name%3D%22Page-1%22%20id%3D%22Ofzp7qnNFB__w1OHay2N%22%3E3ZpZd5s6EMc%2FDY%2FxAYnNj3Hc3D40PW3T05s8yqBg3bK4LF766e%2FISAaBbajX1C8JGi2gv2Z%2BGinR8EO0%2FCcls%2BlT4tNQQ7q%2F1PBYQ8hABoZf3LIqLY5tlYYgZb5oVBme2W8qjLqwFsynmdIwT5IwZzPV6CVxTL1csZE0TRZqs7ckVN86IwFtGZ49Erat%2FzI%2Fn5ZW19Ir%2B0fKgql8s6GLmojIxsKQTYmfLGom%2FEHDD2mS5OVTtHygIRdP6lL2e9xRu%2FmwlMZ5nw5fvfsfevb5%2B8vYeL4bzaavtvP1TowyJ2EhJqwhO4TxRj6bw2PAH4s0zAazlayBV9QqxeTylVQsTYrYp%2FylOlQvpiynzzPi8doF%2BAjYpnkUQsnY9J7TNKfLnfMyNmqBm9EkonkKH6OLDpYUWHiYMRTlRbVehmwzra2VLWxEuEiwGbpSER6EkH8gKuoj6lqEd6qooyqKnWsriluKRpw0pVdeWS1XFcu0ri2W2cf95owuDgpq4yKiGvZ7C%2BphH1UfQsYniB5HfOehaU914fWwn9GLKIvlBiyU7euu7rmENawtyjYFiv17vplDyQtJljFP1UWNeVAiXb3wwsA0HWl4BcOdPtAdJC3jZb3DeFUvfaEpg%2FnBEpbG8pOo38oWGrrDZydF6tFuT8pJGtC8a29ur2Ntoawt6yRtKQ1Jzubq525bPPGGLwnjnivdxBw2ArAZWOU0Ra962tEYqLmZGE5joFKH1kBrX9pM%2Bwj3svsE7jf6q6BZ3jdewQ0%2BkQmkuooXkpAFMXdRcAnuOCMeqAxyyXtRETHf52OMUpqx32SyHo9714zPfq2HNdKs8b5IF4mu6Kxt0su6J%2B6Js51cgNBApuMqa4VO4kqNDsnbW0bPs9Tu2Uhi1CmiD6wuhCxZ%2FlJ7rvWCUtWJF2SfExJGHpS6CGNelTCNxAnhQwmDG4RpblXnJkw7NXiisZd4yU8Sgx2OTxqPUptEfDsvf4IFGhXxf8VPePwB2diNUMbdSxnYfzHGagJynDedHyto2yH5OKxIPGyQ8CoZsxMPtaQGWQqNOlh0Qq6YPbmCr8kV1LgPwOhArqBG5oIunLlIN1O5EpBowtZ3bCQnt8GMjhMLMEN31cTkznn30Nh2Cj%2FVqcZ1VAIMhp0JybYzTYUhp84hfS%2BHTogT%2FDekKU0KYOtAnOAml%2FQL46R9zn6i0QR8Aozj24HJDm%2Bpjjm67RyJDzGWozIJI3WA88EF%2F1lGEicxX40MHCw%2FDDjDIVKB4x52i7L1XLQXN%2BuPfmRcn1PjB%2F0N%2BDF1lRqmcSB%2BNvfSEj%2FNC50z40dGx%2F57GJ7gBGRSxEF5diqTHN3neQ8vf%2Fz%2B9GnXJU1rMGmapE3LLd7v4P1ZFAcfkotwmvudC4Bu2%2BXdqbIo3XBUqFmQZZ71argTNcOrZjq7%2FpB67MHJMC%2BMGmdPpvONZrMkzuiNBL3dGfSuPDtdI8yhWP2HQ9m8%2Bj8R%2FOF%2F%3C%2Fdiagram%3E%3C%2Fmxfile%3E)**
@@ -55,7 +54,7 @@ Diagram di bawah ini mengilustrasikan bagaimana sebuah permintaan dari pengguna 
 
 ---
 
-## 🧠 Penjelasan Konsep Kunci Django
+## Penjelasan Konsep Kunci Django
 
 ### Apa Peran `settings.py`?
 `settings.py` adalah **pusat kendali** atau jantung dari sebuah proyek Django. File ini berisi semua konfigurasi yang menentukan bagaimana aplikasi akan berjalan, termasuk:
