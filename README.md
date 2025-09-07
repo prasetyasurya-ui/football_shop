@@ -23,7 +23,7 @@ Langkah pertama adalah menyiapkan fondasi proyek yang bersih dan terisolasi.
 ### 3. Deployment
 Aplikasi yang sudah selesai dikembangkan kemudian di-deploy agar bisa diakses secara publik.
 - Deploy menggunakan python `manage.py migrate` dan `python manage.py runserver`
-- Upload proyek ke github untuk keperluan version control 
+- Upload proyek ke github untuk keperluan version control
 
 ---
 
@@ -45,8 +45,8 @@ Aplikasi inti bernama `main` dibuat untuk menangani fungsionalitas utama toko.
 - Membuat urls.py dalam direktori main yang berisi perintah untuk mengeksekusi suatu fungsi view di main.views apabila berada di root proyek
 
 ## Melakukan deployment ke PWS terhadap aplikasi yang sudah dibuat sehingga nantinya dapat diakses oleh teman-temanmu melalui Internet.
--Hubungkan projek dengan git
--Mendeploy menggunakan pacil-web-service (pws)
+- Hubungkan projek dengan git
+- Mendeploy menggunakan pacil-web-service (pws)
 
 ---
 
@@ -71,14 +71,14 @@ Diagram di bawah ini mengilustrasikan bagaimana sebuah permintaan dari pengguna 
 -`settings.py` adalah pusat kendali dari proyek django yang menentukan bagaimana proyek django akan berjalan
 
 ### Bagaimana Cara Kerja Migrasi Database di Django?
--Menyinkronkan struktur tabel basis data dengan perubahan model yang terbaru
--Pada saat menjalankan `python manage.py makemigrations`, django melihat file models.py dan membandingkannya dengan migrasi sebelumnya untuk mendeteksi perubahan.
--Pada saat menjalankan `python manage.py migrate`, django menerapkan perubahan pada database menggunakan perintah SQL agar sinkron dengan file models.py
+- Menyinkronkan struktur tabel basis data dengan perubahan model yang terbaru
+- Pada saat menjalankan `python manage.py makemigrations`, django melihat file models.py dan membandingkannya dengan migrasi sebelumnya untuk mendeteksi perubahan.
+- Pada saat menjalankan `python manage.py migrate`, django menerapkan perubahan pada database menggunakan perintah SQL agar sinkron dengan file models.py
 
 ### Mengapa Django Cocok untuk Pemula?
--Karena django memiliki banyak built-in feature
--Cepat
--Open Source
--Secure
--Scalable
+- Karena django memiliki banyak built-in feature
+- Cepat
+- Open Source
+- Secure
+- Scalable
 
