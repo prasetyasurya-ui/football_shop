@@ -2,10 +2,9 @@ from django.shortcuts import render
 
 def show_main(request):
     context = {
-        'name': "Baju Tidur",
-        'price': '50000',
-        'description': 'baju yang nyaman dipakai',
-        'category': 'baju',
+        'shopName': "Wolverhampton Shop",
+        'nama': 'Prasetya Surya Syahputra',
+        'kelas': 'PBP E',
     }
 
     return render(request, "main.html", context)
