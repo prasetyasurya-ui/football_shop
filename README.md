@@ -10,9 +10,11 @@ Berikut adalah rincian langkah demi langkah dalam membangun proyek ini dari awal
 
 ### 1. Inisialisasi Proyek dan Lingkungan
 Langkah pertama adalah menyiapkan fondasi proyek yang bersih dan terisolasi.
-- **Membuat Direktori & Virtual Environment**: Proyek dimulai dengan membuat direktori khusus, lalu menginisialisasi *virtual environment* (`venv`) di dalamnya. Tujuannya adalah untuk mengisolasi semua *dependencies* (paket Python) agar tidak bentrok dengan proyek lain di sistem.
-- **Aktivasi & Instalasi Dependencies**: *Virtual environment* diaktifkan menggunakan `env\Scripts\activate`. Setelah itu, semua paket yang dibutuhkan (seperti Django, gunicorn, whitenoise, dll.) diinstal menggunakan `pip install -r requirements.txt`.
-- **Memulai Proyek Django**: Proyek utama Django dengan nama `football_shop` dibuat menggunakan perintah `django-admin startproject football_shop .`.
+- Membuat direktori dimana projek Django akan dibuat
+- Membuat virtual environment agar mengisolasi package dan versi dependencies di komputer tidak bertabrakan
+- Mengaktifkan virtual environment menggunakan `env\Scripts\Activate`
+- Menyiapkan dependencies dengan mengikuti tutorial 0 dan menginstall dependencies menggunakan pip
+- Start projek django football_shop dengan command `django-admin startproject football_shop .`
 
 ### 2. Konfigurasi Proyek
 - **Environment Variables**: Untuk keamanan, variabel sensitif seperti `SECRET_KEY` dan konfigurasi database tidak ditulis langsung di kode, melainkan dikelola sebagai *environment variable*.
