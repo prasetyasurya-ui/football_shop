@@ -1,6 +1,6 @@
-⚽ Football Shop - Proyek Django
+⚽ Wolverhampton Shop - Proyek Django
 
-Selamat datang di repositori Football Shop, sebuah aplikasi web e-commerce sederhana yang dibangun menggunakan framework Django. Proyek ini dikembangkan sebagai bagian dari tugas mata kuliah Pengembangan Berbasis Platform (PBP).
+Selamat datang di repositori Wolverhampton Shop, sebuah aplikasi web e-commerce sederhana yang dibangun menggunakan framework Django. Proyek ini dikembangkan sebagai bagian dari tugas mata kuliah Pengembangan Berbasis Platform (PBP).
 
 **[🔗 Kunjungi Aplikasi yang Sudah Deploy](https://prasetya-surya-footballshop.pbp.cs.ui.ac.id/)**
 
@@ -37,6 +37,7 @@ Aplikasi inti bernama `main` dibuat untuk menangani fungsionalitas utama toko.
 ## Membuat model pada aplikasi main dengan nama product dan memiliki atribut wajib
 - Mengimport UUID untuk Id Produk
 - Membuat class Produk untuk pembuatan produk dengan atribut atribut wajib dan tipe yang sesuai
+- Menambahkan atribut untuk melacak berapa wishlist dari sebuah produk
 
 ## Membuat sebuah fungsi pada views.py untuk dikembalikan ke dalam sebuah template HTML yang menampilkan nama aplikasi serta nama dan kelas.
 - membuat fungsi `show_main` yang akan merender html dari `main.html` dengan fungsi django
