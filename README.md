@@ -2,84 +2,200 @@
 
 Selamat datang di repositori Wolverhampton Shop, sebuah aplikasi web e-commerce sederhana yang dibangun menggunakan framework Django. Proyek ini dikembangkan sebagai bagian dari tugas mata kuliah Pengembangan Berbasis Platform (PBP).
 
+## Tugas Individu 3
+
 **[🔗 Kunjungi Aplikasi yang Sudah Deploy](https://prasetya-surya-footballshop.pbp.cs.ui.ac.id/)**
 
-## Langkah-Langkah Implementasi
+# Langkah-Langkah Implementasi
 
-Berikut adalah rincian langkah demi langkah dalam membangun proyek ini dari awal hingga deployment.
+## 1. Tambahkan 4 fungsi `views` baru untuk melihat objek yang sudah ditambahkan dalam format XML, JSON, XML by ID, dan JSON by ID.
+Pertama, saya membuat 4 fungsi yang menerima argumen `request` dan `product_id` (untuk fungsi show_..._get_by_id) berikut di `views.py`:
+1. `show_json`
+2. `show_xml`
+3. `show_xml_by_id`
+4. `show_json_by_id`
 
-### 1. Inisialisasi Proyek dan Lingkungan
-Langkah pertama adalah menyiapkan fondasi proyek yang bersih dan terisolasi.
-- Membuat direktori dimana projek Django akan dibuat
-- Membuat virtual environment agar mengisolasi package dan versi dependencies di komputer tidak bertabrakan
-- Mengaktifkan virtual environment menggunakan `env\Scripts\Activate`
-- Menyiapkan dependencies dengan mengikuti tutorial 0 dan menginstall dependencies menggunakan pip
-- Start projek django football_shop dengan command `django-admin startproject football_shop .`
+Keempat fungsi tersebut sebenarnya memiliki struktur yang mirip sekali. Urutan bagaimana saya mengimplementasi fungsi fungsi tersebut adalah:
+1. Mengambil list produk dari database atau hanya mengambil satu produk berdasarkan ID dengan baris `product_list = Item.objects.all()` atau `product = Item.objects.filter(pk = product_id)`
+2. Mengubah data tersebut menjadi data XML atau JSON dengan `serializers.serialize("json"/"xml", product_list/product)`
+3. Return data tersebut dengan HttpResponse dengan `content_type = application/json` atau `content_type = application/xml`
 
-### 2. Konfigurasi dan Proyek
-- Mengonfigurasi environment variable lokal dan production
-- Memodifikasi settings.py untuk menggunakan database, environment variables, dan menambahkan localhost dan 127.0.0.1 di allowed hosts untuk keperluan development
+## 2. Membuat routing URL untuk masing-masing views yang telah ditambahkan
+1. Menambahkan `path('/xml', show_xml, name='show_xml')` ke urlpattern di `main/urls.py`
+2. Menambahkan `path('/json', show_json, name='show_json')` ke urlpattern di `main/urls.py`
+3. Menambahkan `path('/xml/<str:product_id>/', show_xml_by_id, name='show_xml_by_id')` ke urlpattern di `main/urls.py`. `<str:product_id>` mensinyalkan bahwa apabila ada string setelah `xml/` berarti ambil string itu dan jadikan argumen `product_id` di fungsi `show_xml_by_id`
+4. Menambahkan `path('/json/<str:product_id>/', show_json_by_id, name='show_json_by_id')` ke urlpattern di `main/urls.py`. `<str:product_id>` mensinyalkan bahwa apabila ada string setelah `json/` berarti ambil string itu dan jadikan argumen `product_id` di fungsi `show_json_by_id`
 
-### 3. Deployment
-Aplikasi yang sudah selesai dikembangkan kemudian di-deploy agar bisa diakses secara publik.
-- Deploy menggunakan python `manage.py migrate` dan `python manage.py runserver`
-- Upload proyek ke github untuk keperluan version control
+## 3 .Membuat halaman yang menampilkan data objek model yang memiliki tombol "Add" yang akan redirect ke halaman form, serta tombol "Detail" pada setiap data objek model yang akan menampilkan halaman detail objek.
+1. Memperbarui `main.html` agar dapat menampilkan data objek model. Perhatikan bahwa `base.html` adalah template HTML yang digunakan untuk merender page. 
+2. Untuk tombol "Add" yang redirect ke halaman form. Kita buat tag button di dalam tag link dengan href dengan nama yang sesuai dengan yang didefinisikan di `urls.py` misalnya karena kita ingin redirect ke halaman form, maka untuk merender page form kita harus ke url `.../create-product` yang didefinisikan dengan nama `create_product` di `urls.py`, karena itulah href dari link untuk tombol "Add Product" adalah `url 'main:create_product'`. Hal yang sama berlaku untuk tombol "Detail"
+3. Untuk menampilkan data object, kita akan menampilkan dengan tag-tag HTML. Fungsi `show_main` di `views` mengambil data dari Model dan menggabungkan data tersebut dengan `main.html` untuk dirender
+
+### `main.html`
+```
+{% extends 'base.html' %}
+{% block content %}
+
+<h1> {{ shopName }}</h1>
+
+<h2>Nama: </h2>
+<p>{{ nama }}</p>
+
+<h3>Kelas: </h3>
+<p> {{ kelas }}</p>
+
+<a href="{% url 'main:create_product' %}">
+    <button>+Add Product</button>
+</a>
+
+<hr>
+
+{% if not product_list %}
+<p>Belum ada data produk pada {{ shopName }}</p>
+{% else %}
+
+{% for product in product_list%}
+    <div>
+        <h2><a href="{% url 'main:show_product' product.id %}">{{ product.name }}</a></h2>
+        {% if product.thumbnail %}
+        <img src="{{ product.thumbnail }}" alt="a photo of {{ product.name }}">
+        <br />
+        {% endif %}
+        
+        <p>{{ product.description|truncatewords:25}}...</p>
+
+        <p><a href="{% url 'main:show_product' product.id %}"><button>Detail</button></a></p>
+    
+    </div>
+{% endfor %}
+{% endif %}
+
+{% endblock content %}
+```
+
+## Membuat halaman `form` untuk menambahkan objek model pada app sebelumnya
+1. Pertama, saya mengimport `ModelForm` dari library Django lalu membuat `forms.py` dan membuat class ProductForm yang akan inherit ModelForm. ProductForm dibuat untuk memudahkan rendering table di HTML karena terautomasi, kita hanya perlu memberi tahu apa attribut Model yang ingin kita input.
+
+### `forms.py`
+```
+from django.forms import ModelForm
+from main.models import Item
+
+class ProductForm(ModelForm):
+    class Meta:
+        model = Item
+        fields = ["name", "price", "description","category", "thumbnail", "is_featured"]
+```
+
+2. Membuat `create_product.html` yaitu halaman `form` yang akan digunakan untuk menginput data
+
+### `create_product.html`
+```
+{% extends 'base.html' %}
+{% block content %}
+<h1>Add Product</h1>
+
+<form action="" method="POST">
+    {% csrf_token %}
+    <table>
+        {{ form.as_table }}
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" value="Add Product">
+            </td>
+        </tr>
+    </table>
+</form>
+
+{% endblock %}
+```
+
+3. Membuat fungsi `create_product` yang dipanggil ketika mengunjungi halaman form. Fungsi tersebut akan memvalidasi data dan menyimpan data ke basis data apabila lolos validasi. Apabila form belum disubmit maka data-data yang dimasukkan di form masih sementara dan belum disimpan ke basis data. Apabila form sudah disubmit maka akan ada validasi data data yang dimasukkan terlebih dahulu sebelum disimpan ke basis data.
+
+4. Apabila data sudah selesai menyimpan data ke basis data maka akan meredirect ke halaman `main.html`
+
+### `create_product`
+```
+def create_product(request):
+    form = ProductForm(request.POST or None)
+
+    if form.is_valid() and request.method == "POST":
+        form.save()
+        return redirect('main:show_main')
+    
+    context = {'form': form}
+    return render(request, "create_product.html", context)
+```
+
+## 4. Membuat halaman yang menampilkan detail dari setiap data objek model
+1. Membuat `product_detail.html` sebagai halaman yang akan menampilkan detail dari setiap data objek model, seperti nama, harga, dan lain-lain.
+
+### `product_detail.html`
+```
+{% extends 'base.html' %}
+{% block content %}
+<p><a href="{% url 'main:show_main' %}"><button>← Back to News List</button></a></p>
+
+
+<h1>{{ product.name }}</h1>
+
+{% if product.thumbnail %}
+<img src="{{ product.thumbnail }}" alt="a photo of {{product.name}}">
+<br /> <br />
+{% endif %}
+
+<p><b>{{ product.get_category_display }} </b>{% if product.is_featured %} |
+    <b>Featured</b>{% endif %}{% if product.is_item_wanted %} |
+    <b>Frequently Wishlisted</b> {% endif %}
+</p>
+
+<h3>{{ product.price }}</h3>
+
+<p>{{ product.description }}</p>
+{% endblock content %}
+
+```
+
+2. Membuat fungsi `show_product` di `views` untuk merender detail dari objek model. Fungsi tersebut akan meminta suatu product berdasarkan product id dari basis data dan menggabungkan data dari product tersebut dengan `product_detail.html`
+
+
+### `show_product`
+```
+def show_product(request, product_id):
+    product = get_object_or_404(Item, pk=product_id)
+
+    context = {'product': product}
+
+    return render(request, "product_detail.html", context)
+```
 
 ---
 
-## Pembuatan Aplikasi `main`
-Aplikasi inti bernama `main` dibuat untuk menangani fungsionalitas utama toko.
-- Membuat app main dengan command `python manage.py startapp main` dan daftarkan ke installed Apps di settings.py
+## Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
+Data delivery diperlukan karena untuk mengimplementasikan platform yang membutuhkan data akurat untuk beroperasi. Jika tidak ada data atau datanya tidak akurat maka platform tidak akan bekerja dengan tepat
 
-## Melakukan Routing pada proyek agar dapat menjalankan aplikasi main
-- Menambahkan `include('main.urls')` di urls.py yang berada di direktori proyek agar mengimpor rute URL yang berada di main.urls dan karena path nya berupa string kosong maka show_main (fungsi di views.py) akan dijalankan dari perintah di urls.py yang berada di direktori main dan maka dari itu menjalankan aplikasi main
+## Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
+Menurut saya JSON lebih baik karena mudah dibaca karena memakai notasi objek javascript yang memiliki key value pair dibandingkan xml yang lumayan verbose. Selain itu, datanya mudah di kelola karena didukung oleh JS yang merupakan bahasa pemrograman utama untuk website.
 
-## Membuat model pada aplikasi main dengan nama product dan memiliki atribut wajib
-- Mengimport UUID untuk Id Produk
-- Membuat class Produk untuk pembuatan produk dengan atribut atribut wajib dan tipe yang sesuai
-- Menambahkan atribut untuk melacak berapa wishlist dari sebuah produk
+## Jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut?
+Method is_valid() adalah method yang menentukan apakah data yang disubmit valid dan tidak melanggar aturan yang didefinisikan di model. Kita membutuhkan method tersebut supaya data dari form dipastikan valid untuk dimasukkan ke database.
 
-## Membuat sebuah fungsi pada views.py untuk dikembalikan ke dalam sebuah template HTML yang menampilkan nama aplikasi serta nama dan kelas.
-- membuat fungsi `show_main` yang akan merender html dari `main.html` dengan fungsi django
-
-## Nembuat sebuah routing pada urls.py pada aplikasi main untuk memetakan fungsi yang telah dibuat pada views.py
-- Membuat urls.py dalam direktori main yang berisi perintah untuk mengeksekusi suatu fungsi view di main.views apabila berada di root proyek
-
-## Melakukan deployment ke PWS terhadap aplikasi yang sudah dibuat sehingga nantinya dapat diakses oleh teman-temanmu melalui Internet.
-- Hubungkan projek dengan git
-- Mendeploy menggunakan pacil-web-service (pws)
+## Mengapa kita membutuhkan csrf_token saat membuat form di Django?
+Karena `csrf_token` ada untuk mencegah cyberattack Cross-Site Request Forgery (CSRF). Jadi tidak ada yang bisa mengirimkan data ke server tanpa csrf_token yang benar. Apabila kita tidak menambahkan `csrf_token` pada form kita maka situs akan rentan terkena serangan CSRF. Tanpa token tersebut, server Django tidak memiliki cara untuk memverifikasi apakah sebuah request benar benar dari situs yang benar atau situs yang jahat. Penjahat dapat memanfaatkan hal tersebut dengan cara melakukan sebuah transaksi tanpa izin atas nama korban dengan membuat sebuah form yang mirip dengan form transfer dari sebuah metode pembayaran dann membuat korban mengunjungi situs tersebut, saat situs dikunjungi maka ada sebuah form yang otomatis tersubmit yang adalah sebuah request misalnya untuk transfer, karena korban mengunjungi situs tersebut dari browsernya, server metode pembayaran tersebut menganggap bahwa request tersebut benar-benar dilakukan oleh korban.
 
 ---
 
-## Bagan Alur Request-Response Django
+## POSTMAN
 
-Diagram di bawah ini mengilustrasikan bagaimana sebuah permintaan dari pengguna (client) diproses oleh aplikasi Django hingga menghasilkan respons yang ditampilkan kembali ke pengguna.
+`/json`
+![JSON](image.png)
 
-**[Lihat Bagan Interaktif di Draw.io](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&title=Untitled%20Diagram.drawio&dark=auto#R%3Cmxfile%3E%3Cdiagram%20name%3D%22Page-1%22%20id%3D%22Ofzp7qnNFB__w1OHay2N%22%3E3ZpZd5s6EMc%2FDY%2FxAYnNj3Hc3D40PW3T05s8yqBg3bK4LF766e%2FISAaBbajX1C8JGi2gv2Z%2BGinR8EO0%2FCcls%2BlT4tNQQ7q%2F1PBYQ8hABoZf3LIqLY5tlYYgZb5oVBme2W8qjLqwFsynmdIwT5IwZzPV6CVxTL1csZE0TRZqs7ckVN86IwFtGZ49Erat%2FzI%2Fn5ZW19Ir%2B0fKgql8s6GLmojIxsKQTYmfLGom%2FEHDD2mS5OVTtHygIRdP6lL2e9xRu%2FmwlMZ5nw5fvfsfevb5%2B8vYeL4bzaavtvP1TowyJ2EhJqwhO4TxRj6bw2PAH4s0zAazlayBV9QqxeTylVQsTYrYp%2FylOlQvpiynzzPi8doF%2BAjYpnkUQsnY9J7TNKfLnfMyNmqBm9EkonkKH6OLDpYUWHiYMRTlRbVehmwzra2VLWxEuEiwGbpSER6EkH8gKuoj6lqEd6qooyqKnWsriluKRpw0pVdeWS1XFcu0ri2W2cf95owuDgpq4yKiGvZ7C%2BphH1UfQsYniB5HfOehaU914fWwn9GLKIvlBiyU7euu7rmENawtyjYFiv17vplDyQtJljFP1UWNeVAiXb3wwsA0HWl4BcOdPtAdJC3jZb3DeFUvfaEpg%2FnBEpbG8pOo38oWGrrDZydF6tFuT8pJGtC8a29ur2Ntoawt6yRtKQ1Jzubq525bPPGGLwnjnivdxBw2ArAZWOU0Ra962tEYqLmZGE5joFKH1kBrX9pM%2Bwj3svsE7jf6q6BZ3jdewQ0%2BkQmkuooXkpAFMXdRcAnuOCMeqAxyyXtRETHf52OMUpqx32SyHo9714zPfq2HNdKs8b5IF4mu6Kxt0su6J%2B6Js51cgNBApuMqa4VO4kqNDsnbW0bPs9Tu2Uhi1CmiD6wuhCxZ%2FlJ7rvWCUtWJF2SfExJGHpS6CGNelTCNxAnhQwmDG4RpblXnJkw7NXiisZd4yU8Sgx2OTxqPUptEfDsvf4IFGhXxf8VPePwB2diNUMbdSxnYfzHGagJynDedHyto2yH5OKxIPGyQ8CoZsxMPtaQGWQqNOlh0Qq6YPbmCr8kV1LgPwOhArqBG5oIunLlIN1O5EpBowtZ3bCQnt8GMjhMLMEN31cTkznn30Nh2Cj%2FVqcZ1VAIMhp0JybYzTYUhp84hfS%2BHTogT%2FDekKU0KYOtAnOAml%2FQL46R9zn6i0QR8Aozj24HJDm%2Bpjjm67RyJDzGWozIJI3WA88EF%2F1lGEicxX40MHCw%2FDDjDIVKB4x52i7L1XLQXN%2BuPfmRcn1PjB%2F0N%2BDF1lRqmcSB%2BNvfSEj%2FNC50z40dGx%2F57GJ7gBGRSxEF5diqTHN3neQ8vf%2Fz%2B9GnXJU1rMGmapE3LLd7v4P1ZFAcfkotwmvudC4Bu2%2BXdqbIo3XBUqFmQZZ71argTNcOrZjq7%2FpB67MHJMC%2BMGmdPpvONZrMkzuiNBL3dGfSuPDtdI8yhWP2HQ9m8%2Bj8R%2FOF%2F%3C%2Fdiagram%3E%3C%2Fmxfile%3E)**
+`/xml`
+![XML](image-1.png)
 
-**Penjelasan Bagan:**
-1. Pengguna mengakses URL di browser -> (urls.py) Django menerima permintaan dan mencocokkan URL yang diminta dengan pola-pola yang terdapat di `urls.py`. Jika cocok, Django akan meneruskannya ke fungsi view yang sesuai.
-2. (views.py) menerima request. Jika perlu data, view akan berkomunikasi dengan `models.py`
-3. (models.py) berfungsi sebagai jembatan ke database. Ia mengambil, membuat, atau memodifikasi data sesuai dengan instruksi dari `views.py`
-4. Setelah `views.py` mendapat data dari model, ia akan menggabungkan data tersebut dengan template HTML atau di projek ini `template.html`
-5. `views.py` akan merender`template tersebut menjadi halaman HTML yang utuh lalu mengirimkannya kembali sebagai respon ke browser pengguna untuk ditampilkan
+`/json/product_id`
+![json_by_id](image-2.png)
 
----
-
-## Penjelasan Konsep Kunci Django
-
-### Apa Peran `settings.py`?
-- `settings.py` adalah pusat kendali dari proyek django yang menentukan bagaimana proyek django akan berjalan
-
-### Bagaimana Cara Kerja Migrasi Database di Django?
-- Menyinkronkan struktur tabel basis data dengan perubahan model yang terbaru
-- Pada saat menjalankan `python manage.py makemigrations`, django melihat file models.py dan membandingkannya dengan migrasi sebelumnya untuk mendeteksi perubahan.
-- Pada saat menjalankan `python manage.py migrate`, django menerapkan perubahan pada database menggunakan perintah SQL agar sinkron dengan file models.py
-
-### Mengapa Django Cocok untuk Pemula?
-- Karena django memiliki banyak built-in feature
-- Cepat
-- Open Source
-- Secure
-- Scalable
-
+`/xml/product_id`
+![xml_by_id](image-3.png)

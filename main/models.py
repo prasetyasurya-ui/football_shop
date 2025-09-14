@@ -13,7 +13,7 @@ class Item(models.Model):
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField()
+    name = models.CharField(max_length=255)
     price = models.PositiveIntegerField(default=0)
     description = models.TextField()
     thumbnail = models.URLField(blank=True, null=True)
@@ -27,5 +27,9 @@ class Item(models.Model):
 
     @property
     def is_item_wanted(self):
-        return wishlists > 100;
-    
+        return self.wishlists > 100;
+
+class Employee(models.Model):
+    nama = models.CharField(max_length = 255);
+    umur = models.PositiveIntegerField(default = 18);
+    persona = models.TextField();
