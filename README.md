@@ -32,7 +32,7 @@ Keempat fungsi tersebut sebenarnya memiliki struktur yang mirip sekali. Urutan b
 3. Untuk menampilkan data object, kita akan menampilkan dengan tag-tag HTML. Fungsi `show_main` di `views` mengambil data dari Model dan menggabungkan data tersebut dengan `main.html` untuk dirender
 
 ### `main.html`
-```
+```html
 {% extends 'base.html' %}
 {% block content %}
 
@@ -77,7 +77,7 @@ Keempat fungsi tersebut sebenarnya memiliki struktur yang mirip sekali. Urutan b
 1. Pertama, saya mengimport `ModelForm` dari library Django lalu membuat `forms.py` dan membuat class ProductForm yang akan inherit ModelForm. ProductForm dibuat untuk memudahkan rendering table di HTML karena terautomasi, kita hanya perlu memberi tahu apa attribut Model yang ingin kita input.
 
 ### `forms.py`
-```
+```python
 from django.forms import ModelForm
 from main.models import Item
 
@@ -90,7 +90,7 @@ class ProductForm(ModelForm):
 2. Membuat `create_product.html` yaitu halaman `form` yang akan digunakan untuk menginput data
 
 ### `create_product.html`
-```
+```html
 {% extends 'base.html' %}
 {% block content %}
 <h1>Add Product</h1>
@@ -116,7 +116,7 @@ class ProductForm(ModelForm):
 4. Apabila data sudah selesai menyimpan data ke basis data maka akan meredirect ke halaman `main.html`
 
 ### `create_product`
-```
+```python
 def create_product(request):
     form = ProductForm(request.POST or None)
 
@@ -132,7 +132,7 @@ def create_product(request):
 1. Membuat `product_detail.html` sebagai halaman yang akan menampilkan detail dari setiap data objek model, seperti nama, harga, dan lain-lain.
 
 ### `product_detail.html`
-```
+```html
 {% extends 'base.html' %}
 {% block content %}
 <p><a href="{% url 'main:show_main' %}"><button>← Back to News List</button></a></p>
@@ -161,7 +161,7 @@ def create_product(request):
 
 
 ### `show_product`
-```
+```python
 def show_product(request, product_id):
     product = get_object_or_404(Item, pk=product_id)
 
