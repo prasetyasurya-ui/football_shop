@@ -28,8 +28,3 @@ class Item(models.Model):
     @property
     def is_item_wanted(self):
         return self.wishlists > 100;
-
-class Employee(models.Model):
-    nama = models.CharField(max_length = 255);
-    umur = models.PositiveIntegerField(default = 18);
-    persona = models.TextField();
