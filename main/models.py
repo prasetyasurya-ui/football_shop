@@ -23,7 +23,8 @@ class Item(models.Model):
     category = models.CharField(max_length=15, choices=CATEGORY_CHOICES, default='update')
     is_featured = models.BooleanField(default=False)
     is_wanted = models.BooleanField(default=False)
-    wishlists = models.PositiveIntegerField(default = 0);
+    wishlists = models.PositiveIntegerField(default = 0)
+    terjual = models.PositiveIntegerField(default = 0)
 
     def __str__(self):
         return self.name

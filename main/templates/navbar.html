@@ -1,0 +1,71 @@
+<nav class="fixed top-0 left-0 w-full bg-[#fdb913] shadow-sm z-50">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+
+            <div class="flex items-center space-x-8">
+                <h1 class="font-bold">WolverHampton Shop</h1>
+                
+                <div class="hidden md:flex">
+                    <ul class="flex items-center space-x-8">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="">Kit</a></li>
+                        <li><a href="">Apparel</a></li>
+                        <li><a href="">Gifts and Accessories</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="hidden md:flex">
+                {% if user.is_authenticated %}
+                    <div class="flex items-center space-x-6">
+                        <a href="{% url 'main:create_product' %}">Add Product</a>
+                        <div class="flex flex-col text-right">
+                            <span class="text-sm">{{ name|default:user.username }}</span>
+                            <span class="text-xs">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</span>
+                        </div>
+                        <a href="{% url 'main:logout' %}">Logout</a>
+                    </div>
+                {% else %}
+                    <div class="flex items-center space-x-6">
+                        <a href="{% url 'main:login' %}">Login</a>
+                        <a href="{% url 'main:register' %}">Register</a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="md:hidden flex items-center">
+                <button id="hamburger-button" class="inline-flex items-center justify-center p-2 rounded-md hover:bg-amber-300">
+                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="mobile-menu" class="hidden md:hidden bg-[#fdb913] border-t border-amber-400">
+        <div class="px-2 pt-2 pb-3 space-y-1">
+            <a href="/" class="block px-3 py-2 rounded-md text-base font-medium">Home</a>
+            <a href="" class="block px-3 py-2 rounded-md text-base font-medium">Kit</a>
+            <a href="" class="block px-3 py-2 rounded-md text-base font-medium">Apparel</a>
+            <a href="" class="block px-3 py-2 rounded-md text-base font-medium">Gifts and Accessories</a>
+        </div>
+        <div class="pt-4 pb-3 border-t border-amber-500">
+            {% if user.is_authenticated %}
+            <div class="px-4">
+                <div class="font-medium">{{ name|default:user.username }}</div>
+                <div class="text-sm text-gray-800">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
+            </div>
+            <div class="mt-3 px-2 space-y-1">
+                <a href="{% url 'main:create_product' %}" class="block px-3 py-2 rounded-md text-base font-medium">Add Product</a>
+                <a href="{% url 'main:logout' %}" class="block px-3 py-2 rounded-md text-base font-medium">Logout</a>
+            </div>
+            {% else %}
+            <div class="px-2 space-y-1">
+                <a href="{% url 'main:login' %}" class="block px-3 py-2 rounded-md text-base font-medium">Login</a>
+                <a href="{% url 'main:register' %}" class="block px-3 py-2 rounded-md text-base font-medium">Register</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</nav>

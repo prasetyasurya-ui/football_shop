@@ -1,22 +1,30 @@
 {% extends 'base.html' %}
 {% block content %}
-<p><a href="{% url 'main:show_main' %}"><button>← Back to News List</button></a></p>
+{% include 'navbar.html' %}
 
+<div class="pt-16 min-h-screen bg-gray-50">
+    <div class="max-w-7xl w-full mx-auto py-8 px-8">
+        <div class="bg-white md:flex gap-6 p-4 shadow-md border-gray-200 border">
+            <div class="w-[450px] h-[450px]">
+                {% if product.thumbnail %}
+                    <img src="{{ product.thumbnail }}" alt="a photo of {{product.name}}" class="w-full h-full object-cover">
+                {% else %}
+                    <div class="bg-gray-200 w-full h-full"></div>
+                {% endif %}
+            </div>
+    
+            <div class="">
+                <h1 class="font-bold text-3xl">{{ product.name }}</h1>
+                <p class="my-2">
+                    <span class="text-gray-900">{{ product.terjual }}</span>
+                    <span class="text-gray-500">Terjual</span>
+                </p>
+                <h3 class="text-amber-400 text-4xl mb-2">Rp{{ product.price }}</h3>
+                
+                <p class="text-md text-gray-800">{{ product.description }}</p>
+            </div>
+        </div>
+    </div>
+</div>
 
-<h1>{{ product.name }}</h1>
-
-{% if product.thumbnail %}
-<img src="{{ product.thumbnail }}" alt="a photo of {{product.name}}">
-<br /> <br />
-{% endif %}
-
-<p><b>{{ product.get_category_display }} </b>{% if product.is_featured %} |
-    <b>Featured</b>{% endif %}{% if product.is_item_wanted %} |
-    <b>Frequently Wishlisted</b> {% endif %}
-</p>
-
-<h3>{{ product.price }}</h3>
-
-<p>{{ product.description }}</p>
 {% endblock content %}
-

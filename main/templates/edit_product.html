@@ -4,7 +4,7 @@
 <div class="pt-16 min-h-screen bg-gray-50">
     <div class="max-w-4xl mx-auto w-full py-8 px-8">
         <div class="bg-white shadow-md border-gray-200 p-4">
-            <h1 class="text-2xl font-bold mb-2">Add Product</h1>
+            <h1 class="text-2xl font-bold mb-2">Edit Product</h1>
             
             <form action="" method="POST">
                 {% csrf_token %}
@@ -17,7 +17,7 @@
                         {{field}}
                     </div>
                     {% if field.help_text %}
-                    <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
+                        <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
                     {% endif %}
                     {% for error in field.errors %}
                         <p class="mt-1 text-sm text-red-600">{{ error }}</p>
@@ -26,7 +26,7 @@
                 {% endfor %}
                 <div>
                     <a href="{% url 'main:show_main' %}" class="bg-red-500 px-2 py-1 text-white rounded-lg">Cancel</a>
-                    <button type="submit" class="bg-green-200 px-2 py-1 rounded-lg">Add</button>
+                    <button type="submit" class="bg-green-200 px-2 py-1 rounded-lg">Update</button>
                 </div>
             </form>
         </div>
