@@ -1,4 +1,10 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+<title>WolverHampton Shop</title>
+{% endblock meta %}
+
 {% block content %}
 {% include 'navbar.html' %}
 
@@ -15,7 +21,8 @@
         </div>
                 
         {% if not product_list %}
-        <div>
+        <div class="flex items-center justify-center w-full flex-col">
+            <img src="{% static 'image/no-image.png' %}" alt="No product available" class="w-full h-full object-contain max-w-md max-h-md">
             <p>Belum ada data produk pada {{ shopName }}</p>
         </div>
         {% else %}

@@ -1,9 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
 {% include 'navbar.html' %}
+
+{% block meta %}
+<title>Edit Product</title>
+{% endblock meta %}
+
 <div class="pt-16 min-h-screen bg-gray-50">
     <div class="max-w-4xl mx-auto w-full py-8 px-8">
-        <div class="bg-white shadow-md border-gray-200 p-4">
+        <div class="bg-white shadow-md border-gray-300 p-4 form-style">
             <h1 class="text-2xl font-bold mb-2">Edit Product</h1>
             
             <form action="" method="POST">

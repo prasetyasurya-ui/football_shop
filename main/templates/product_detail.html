@@ -2,9 +2,13 @@
 {% block content %}
 {% include 'navbar.html' %}
 
+{% block meta %}
+<title>WolverHampton Shop</title>
+{% endblock meta %}
+
 <div class="pt-16 min-h-screen bg-gray-50">
     <div class="max-w-7xl w-full mx-auto py-8 px-8">
-        <div class="bg-white md:flex gap-6 p-4 shadow-md border-gray-200 border">
+        <div class="bg-white md:flex gap-6 p-4 shadow-md border-gray-300s border">
             <div class="w-[450px] h-[450px]">
                 {% if product.thumbnail %}
                     <img src="{{ product.thumbnail }}" alt="a photo of {{product.name}}" class="w-full h-full object-cover">
