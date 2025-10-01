@@ -3,7 +3,7 @@
 <div class="relative rounded-lg overflow-hidden border border-gray-300">
     <div class="aspect-[16/9] relative overflow-hidden">
         {% if product.thumbnail %}
-        <img src="{{ product.thumbnail }}" alt="a photo of {{ product.name }}" class="w-full h-full object-cover">
+        <img src="{{ product.thumbnail }}" alt="a photo of {{ product.name }}" class="w-full h-full object-contain">
         {% else %}
         <div class="w-full h-full bg-gray-200"></div>
         {% endif %}
