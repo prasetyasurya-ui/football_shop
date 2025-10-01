@@ -22,8 +22,8 @@
                 
         {% if not product_list %}
         <div class="flex items-center justify-center w-full flex-col">
-            <img src="{% static 'image/no-image.png' %}" alt="No product available" class="w-full h-full object-contain max-w-md max-h-md">
-            <p>Belum ada data produk pada {{ shopName }}</p>
+            <img src="{% static 'image/no-image.png' %}" alt="No product available" class="w-full h-full object-contain max-w-sm max-h-sm">
+            <p class="mt-2">Belum ada data produk pada {{ shopName }}</p>
         </div>
         {% else %}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

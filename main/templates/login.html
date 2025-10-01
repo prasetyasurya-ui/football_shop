@@ -1,77 +1,82 @@
-{% extends 'base.html' %}
+    {% extends 'base.html' %}
+    {% load static %}
+    {% block meta %}
+    <title>Login - WolverHampton Shop</title>
+    {% endblock meta %}
 
-{% block meta %}
-<title>Login - WolverHampton Shop</title>
-{% endblock meta %}
+    {% block content %}
 
-{% block content %}
-
-<div class="bg-gray-50 w-full min-h-screen flex items-center justify-center p-8">
-    <div class="w-full max-w-md z-10 relative">
-        <div class="bg-white p-6 rounded-lg shadow-sm form-style">
-            <h1 class="text-center text-2xl font-bold">Sign in</h1>
-            <h3 class="text-center my-2 text-sm">Welcome back to WolverHampton Shop</h3>
-
-            {% if form.non_field_errors %}
-            <div class="mb-4">
-            {% for error in form.non_field_errors %}
-                <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700">
-                {{ error }}
+    <div class="bg-gray-50 w-full min-h-screen flex items-center justify-center p-8">
+        <div class="w-full max-w-4xl z-10">
+            <div class="bg-white rounded-lg shadow-sm form-style flex border border-gray-400 overflow-hidden">
+                <div class="hidden md:block w-full">
+                    <img class="w-full h-full object-cover" src="{% static 'image/login-img.jpg' %}" alt="" srcset="">
                 </div>
-            {% endfor %}
-            </div>
-            {% endif %}
-
-            {% if form.errors %}
-            <div class="mb-4">
-            {% for field, errors in form.errors.items %}
-                {% if field != '__all__' %}
-                {% for error in errors %}
-                    <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700 mb-2">
-                    <strong>{{ field|title }}:</strong> {{ error }}
+                <div class="w-full p-6 flex flex-col">
+                    <h1 class="text-center text-2xl font-bold">Sign in</h1>
+                    <h3 class="text-center my-2 text-sm">Welcome back to WolverHampton Shop</h3>
+        
+                    {% if form.non_field_errors %}
+                    <div class="mb-4">
+                    {% for error in form.non_field_errors %}
+                        <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700">
+                        {{ error }}
+                        </div>
+                    {% endfor %}
                     </div>
-                {% endfor %}
-                {% endif %}
-            {% endfor %}
-            </div>
-            {% endif %}
-
-            <form method="POST" action="" class="space-y-8">
-                {% csrf_token %}
-                <div class="flex flex-col mb-2">
-                    <label for="name" class="mb-2" >Username</label>
-                    <input type="text"
-                        maxlength="50"
-                        name="username"
-                        required
-                        placeholder="Enter your username"
-                        class="p-1 border px-4 py-3 rounded-md border-gray-300">
-                </div>
+                    {% endif %}
+        
+                    {% if form.errors %}
+                    <div class="mb-4">
+                    {% for field, errors in form.errors.items %}
+                        {% if field != '__all__' %}
+                        {% for error in errors %}
+                            <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700 mb-2">
+                            <strong>{{ field|title }}:</strong> {{ error }}
+                            </div>
+                        {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                    </div>
+                    {% endif %}
+        
+                    <form method="POST" action="" class="space-y-8">
+                        {% csrf_token %}
+                        <div class="flex flex-col mb-2">
+                            <label for="name" class="mb-2" >Username</label>
+                            <input type="text"
+                                maxlength="50"
+                                name="username"
+                                required
+                                placeholder="Enter your username"
+                                class="p-1 border px-4 py-3 rounded-md border-gray-300">
+                        </div>
+                        
+                        <div class="flex flex-col mb-2">
+                            <label for="password" class="mb-2" >Password</label>
+                            <input 
+                                type="password"
+                                name="password"
+                                id="password"
+                                placeholder="Enter your password"
+                                class="p-1 border px-4 py-3 rounded-md border-gray-300">
                 
-                <div class="flex flex-col mb-2">
-                    <label for="password" class="mb-2" >Password</label>
-                    <input 
-                        type="password"
-                        name="password"
-                        id="password"
-                        placeholder="Enter your password"
-                        class="p-1 border px-4 py-3 rounded-md border-gray-300">
-        
+                        </div>
+                        <button type="submit" class="w-full bg-[#fdb913] px-3 py-3 rounded-lg font-bold hover:bg-[#e4a70d] transition-colors">Sign in</button>
+                    </form>
+                
+                    {% if messages %}
+                    <ul>
+                        {% for message in messages %}
+                        <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %} 
+                        <p class="mt-4 text-center p-2">Don't have an account yet?  <a href="{% url 'main:register' %}" class="text-[#fdb913] font-medium">Register Now</a></p>
+                    </div>
                 </div>
-                <button type="submit" class="w-full bg-[#fdb913] px-3 py-3 rounded-lg font-bold hover:bg-[#e4a70d] transition-colors">Sign in</button>
-            </form>
-        
-            {% if messages %}
-            <ul>
-                {% for message in messages %}
-                <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %} 
-            <p class="mt-4 text-center p-2">Don't have an account yet?  <a href="{% url 'main:register' %}" class="text-[#fdb913] font-medium">Register Now</a></p>
             </div>
         </div>
-    </div>
-    
+        
 
-{% endblock content %}
+    {% endblock content %}

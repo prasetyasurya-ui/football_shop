@@ -115,6 +115,9 @@ def delete_product(request, id):
 
 ## Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!
 - Responsive design adalah konsep yang penting karena perangkat-perangkat digital di zaman sekarang memiiki ukuran layar yang berbeda-beda. Responsive design beradaptasi sesuai dengan ukuran layar yang digunakan oleh User, oleh karena itu user mendapat experience yang baik saat mengunjungi situs.
+- Aplikasi belum menerapkan responsive design => Siak.ng, lihat bahwa di tampilan layar yang lebih kecil, designnya sangat tidak optimal karena terlalu kecil di layar perangkat yang lebih kecil
+![siak.ng](image-4.png)
+- Aplikasi sudah menerapkan responsive design => scele, lihat bahwa di tampilan layar kecil, layoutnya berubah untuk mengakomodir perangkat yang lebih kecil
 
 ## Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
 1. Padding adalah ruang transparan di dalam border, padding memberi jarak antara konten dengan border elemen itu sendiri. Cara mengimplementasikan => `padding: 20px` atau `padding: 10px 20px` atau `padding: 5px 6px 7px 8px`
