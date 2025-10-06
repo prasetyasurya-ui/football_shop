@@ -12,27 +12,255 @@
 <div class="pt-16 min-h-screen bg-gray-50">
     <div class="max-w-7xl mx-auto py-8 px-8">
         <div class="mb-8 flex space-x-4">
-            <a href="?filter=all">
-                <button type="button" class="text-xl ">All Products</button>
+            <a href="?filter=all" id="filter-all" class="px-4 py-2 rounded-md font-medium transition-colors">
+                <button type="button" class="text-xl">All Products</button>
             </a>
-            <a href="?filter=my">
-                <button type="button" class="text-xl ">My Products</button>
+            <a href="?filter=my" id="filter-my" class="px-4 py-2 rounded-md font-medium transition-colors">
+                <button type="button" class="text-xl">My Products</button>
             </a>
+            <button onclick="filterAndDisplayProduct()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 4v6h-6"></path>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+            </button>
         </div>
-                
-        {% if not product_list %}
-        <div class="flex items-center justify-center w-full flex-col">
+
+        <!-- Loading State -->
+        <div id="loading" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+            <svg class="animate-spin h-8 w-8 text-[#fdb913] inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            <p class="text-gray-600 mt-3">Loading Product...</p>
+        </div>
+
+        <!-- Error state -->
+        <div id="error" class="hidden"></div>
+
+        <!-- Product Grid -->
+        <div id="grid" class="hidden"></div>
+
+
+        <!-- Empty State -->
+        <div id="empty" class="flex items-center justify-center w-full flex-col">
             <img src="{% static 'image/no-image.png' %}" alt="No product available" class="w-full h-full object-contain max-w-sm max-h-sm">
             <p class="mt-2">Belum ada data produk pada {{ shopName }}</p>
+            <p>Be the first to sell a product with the community</p>
+            <button onclick="showModal()" class="my-2 px-2 py-1 bg-[#fdb913] hover:bg-[#e4a70d] rounded-md">Create Product</button>
         </div>
-        {% else %}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {% for product in product_list %}
-                {% include 'card_product.html' with Item=product %}
-            {% endfor %}
-        </div>
-        {% endif %}
     </div>
 </div>
+
+<script>
+    // config
+    const ITEM_API_ENDPOINT = "{% url 'main:show_json' %}";
+    const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}"
+
+    // DOM
+    const loadingSpinner = document.getElementById('loading');
+    const errorMessage = document.getElementById('error');
+    const emptyStateDisplay = document.getElementById('empty');
+    const itemGridContainer = document.getElementById('grid');
+    const showAllProductButton = document.getElementById('filter-all');
+    const showMyProductButton = document.getElementById('filter-my');
+
+    // state vars
+    let activeFilter = "all";
+    let allProductData = [];
+
+    // Update filter button appearance
+    function updateFilterButtonsAppearance() {
+        if (!showAllProductButton || !showMyProductButton) return;
+
+        if (activeFilter == 'all') {
+            showAllProductButton.className = "bg-[#fdb913] hover:bg-[#e4a70d] px-4 py-2 rounded-md font-medium transition-colors "
+            showMyProductButton.className = "bg-transparent px-4 py-2 rounded-md font-medium transition-colors"
+        }
+        else {
+            showMyProductButton.className = "bg-[#fdb913] hover:bg-[#e4a70d] px-4 py-2 rounded-md font-medium transition-colors "
+            showAllProductButton.className = "bg-transparent px-4 py-2 rounded-md font-medium transition-colors"
+        }
+    }
+
+    function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
+        loadingSpinner.classList.toggle('hidden', !showLoading);
+        errorMessage.classList.toggle('hidden', !showError);
+        emptyStateDisplay.classList.toggle('hidden', !showEmpty);
+        itemGridContainer.classList.toggle('hidden', !showGrid);
+
+        if (showGrid) {
+            itemGridContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+        }
+    }
+
+    function getCategoryName(categoryCode) {
+        const categoryMapping = {
+            baju: 'Baju',
+            celana: 'Celana',
+            topi: 'Topi',
+            sepatu: 'Sepatu',
+            update: 'Update'
+        }
+        return categoryMapping[categoryCode] || categoryCode;
+    }
+
+    function buildProductCardElement (product) {
+        const divElement = document.createElement('div');
+        divElement.className = 'relative rounded-lg overflow-hidden border border-gray-300 flex flex-col';
+        
+        const detailLink = `{% url 'main:show_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', product.id);
+        const editLink = `{% url 'main:edit_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', product.id);
+        const deleteLink = `{% url 'main:delete_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', product.id);
+        
+        const categoryLabel = getCategoryName(product.category);
+        const isFeatured = product.is_featured;
+        
+        const thumbnailHtml = product.thumbnail
+        ? `<img src="${ product.thumbnail }" alt="a photo of ${ product.name }" class="w-full h-full object-contain">`
+        : `<div class="w-full h-full bg-gray-200"></div>`;
+
+        const featuredBadge = isFeatured
+        ? `<p class="top-3 left-3 absolute bg-amber-400 px-2 py-1 rounded-lg"><b>Featured</b></p>`
+        : '';
+
+        const editDeleteButton = CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(product.user_id)
+        ? `<span class="space-x-4">
+                <button onclick="openEditModal('${product.id}')">
+                    Edit
+                </button>
+                <button onclick="handleDeleteProduct('${product.id}', '${deleteLink}')" class="py-2 px-4 bg-red-600 text-white rounded-lg hover:bg-red-500">
+                    Delete
+                </button>
+            </span>`
+        : '<span></span>';
+
+        const completeCardHtml = `
+            <div class="aspect-[16/9] relative overflow-hidden">
+                ${thumbnailHtml}
+                ${featuredBadge}
+            </div>
+
+            <div class="p-4 flex flex-col flex-grow">
+                <div>
+                <div class="flex justify-between">
+                    <span class="text-xl font-extrabold text-gray-800">${ product.price }</span>
+                    <span class="text-sm text-gray-500">${ product.terjual } Terjual</span>
+                </div>
+                <div class="my-2">
+                    <a href="${detailLink}" class="text-lg font-extrabold text-gray-900">${ product.name }</a>
+                </div>
+                <p class="text-sm text-gray-600">${ product.description }</p>
+                </div>
+
+                <div class="mt-auto pt-4 flex justify-between items-center">
+                    <span>
+                        <a href="${detailLink}"><button class="py-2">Detail</button></a>
+                    </span>
+                    ${editDeleteButton}
+                </div>
+            </div>
+        `;
+
+        divElement.innerHTML = completeCardHtml;
+        return divElement;
+    }
+
+    async function handleDeleteProduct (productId, deleteUrl) {
+        if (!confirm("Are you sure you want to delete this product?")) {
+            return;
+        }
+
+        try {
+            const response = await fetch(deleteUrl, {
+                method:'POST',
+            })
+
+            if (response.ok) {
+                showToast('Product deleted successfully!', "", "success");
+                fetchProductsFromServer();
+            } else {
+                showToast("Failed to delete product.", "", "error");
+            }
+        } catch (error) {
+            console.error('Error: ', error);
+            showToast("Error, an unexpected error occured.", "", "success");
+        }
+
+    }
+
+    function renderAllProductCard (products) {
+        itemGridContainer.innerHTML = '';
+        products.forEach(product => {
+            const cardElement = buildProductCardElement(product);
+            itemGridContainer.appendChild(cardElement);
+        })
+    }
+
+    function filterAndDisplayProduct () {
+        updateFilterButtonsAppearance();
+
+        const filteredProduct = activeFilter == 'all'
+        ? allProductData
+        : allProductData.filter(product => Number(product.user_id) === Number(CURRENT_USER_ID));
+
+        if (filteredProduct.length === 0) {
+            displayPageSection({ showEmpty: true });
+        }
+        else {
+            renderAllProductCard(filteredProduct);
+            displayPageSection({ showGrid: true });
+        }
+    }
+
+    async function fetchProductsFromServer () {
+        try {
+            displayPageSection ({ showLoading: true });
+
+            const response = await fetch(ITEM_API_ENDPOINT, {
+                headers: { 'Accept': 'application/json' },
+            })
+
+            if (!response.ok) {
+                throw new Error('failted to fetch product data from server')
+            }
+
+            const productData = await response.json();
+            allProductData = productData || [];
+
+            filterAndDisplayProduct();
+        } catch (error) {
+            console.error('Error loading product: ', error);
+            displayPageSection({ showError: true })
+        }
+    }
+
+    function handleShowAllProduct (e) {
+        e.preventDefault();
+        activeFilter = 'all';
+        filterAndDisplayProduct();
+    }
+
+    function handleShowMyProduct (e) {
+        e.preventDefault();
+        activeFilter = 'my';
+        filterAndDisplayProduct();
+    }
+
+
+    // initialize page
+    function initializeProductPage () {
+        showAllProductButton.addEventListener('click', handleShowAllProduct);
+        showMyProductButton.addEventListener('click', handleShowMyProduct);
+        
+        fetchProductsFromServer();
+    }
+
+    document.addEventListener("productAdded", function() {
+        fetchProductsFromServer();
+    })
+
+    initializeProductPage();
+</script>
 
 {% endblock content %}

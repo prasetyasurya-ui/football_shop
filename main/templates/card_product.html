@@ -7,13 +7,12 @@
         {% else %}
         <div class="w-full h-full bg-gray-200"></div>
         {% endif %}
+        {% if product.is_featured %}
+        <p class="top-3 left-3 absolute bg-amber-400 px-2 py-1 rounded-lg"><b>Featured</b></p>
+        {% endif %}
     </div>
-    
-    {% if product.is_featured %}
-    <p class="top-3 left-3 absolute bg-amber-400 px-2 py-1 rounded-lg"><b>Featured</b></p>
-    {% endif %}
 
-    <div class="bg  p-4">
+    <div class="p-4">
         <div class="flex justify-between">
             <span class="text-xl font-extrabold text-gray-800">Rp{{ product.price }}</span>
             <span class="text-sm text-gray-500">{{ product.terjual }} Terjual</span>

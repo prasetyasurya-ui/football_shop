@@ -1,0 +1,165 @@
+<!-- Modal -->
+<div id="crudModal" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800 bg-opacity-50">
+    <div id="crudModalContent" class="bg-white rounded-lg shadow-lg w-5/6 sm:w-3/5 md:w-1/2 lg:w-2/5 xl:w-1/3 max-h-screen overflow-y-auto">
+        <!-- Modal header -->
+        <div class="flex items-center justify-between p-4 border-b">
+            <div>
+            <h3 class="text-xl font-semibold text-gray-900">
+                Create New Product
+            </h3>
+            <p class="text-sm text-gray-600 mt-1">Sell your product to the community</p>
+            </div>
+            <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" onclick="hideModal()">
+            <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="sr-only">Close modal</span>
+            </button>
+        </div>
+        <!-- Modal body -->
+        <div class="px-6 py-4 space-y-6 form-style">
+            <form id="productForm">
+            <div class="mb-4">
+                <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                <input type="text" id="name" name="name" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Enter product name" required>
+            </div>
+            <div class="mb-4">
+                <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+                <input type="number" id="price" name="price" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Enter product price" required>
+            </div>
+            <div class="mb-4">
+                <label for="desc" class="block text-sm font-medium text-gray-700">Description</label>
+                <textarea id="desc" name="desc" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Enter Product description" required></textarea>
+            </div>
+            <div class="mb-4">
+                <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                <select id="category" name="category" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" required>
+                <option value="">Choose a category</option>
+                <option value="baju">Baju</option>
+                <option value="celana">Celana</option>
+                <option value="topi">Topi</option>
+                <option value="sepatu">Sepatu</option>
+                <option value="update">Update</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="thumbnail" class="block text-sm font-medium text-gray-700">Thumbnail URL</label>
+                <input type="url" id="thumbnail" name="thumbnail" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="https://example.com/image.jpg">
+            </div>
+            <div class="mb-4">
+                <div class="flex items-center">
+                <input id="is_featured" name="is_featured" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded">
+                <label for="is_featured" class="ml-2 text-sm font-medium text-gray-900">Featured Product</label>
+                </div>
+            </div>
+            </form>
+        </div>
+        <!-- Modal footer -->
+        <div class="flex flex-col sm:flex-row gap-4 p-6 border-t border-gray-200 rounded-b">
+            <button type="button" id="cancelButton" class="order-2 sm:order-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors text-center" onclick="hideModal()">Cancel</button>
+            <button type="submit" id="submitProduct" form="productForm" class="text-black order-1 sm:order-2 flex-1 bg-[#fdb913] px-6 py-3 rounded-md font-medium hover:bg-[#e4a70d]  transition-colors">Sell Product</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function openEditModal(productId) {
+        const url = `{% url 'main:show_json_by_id' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', productId);
+        const response = await fetch(url);
+        const product = await response.json();
+
+        // 2. Populate the form fields with the data
+        document.getElementById('name').value = product.name;
+        document.getElementById('price').value = product.price;
+        document.getElementById('desc').value = product.description;
+        document.getElementById('category').value = product.category;
+        document.getElementById('thumbnail').value = product.thumbnail;
+        document.getElementById('is_featured').checked = product.is_featured;
+        
+        // 3. Open the modal in "edit" mode
+        showModal('edit', productId);
+    }
+
+    function showModal(mode = 'create', productId = null) {
+        const modal = document.getElementById('crudModal');
+        const modalContent = document.getElementById('crudModalContent');
+        const form = document.getElementById("productForm");
+        const modalTitle = modal.querySelector('h3');
+        const submitButton = document.getElementById('submitProduct');
+
+        if (mode === 'edit') {
+            modalTitle.textContent = 'Edit Product';
+            submitButton.textContent = 'Save Changes';
+            form.dataset.mode = 'edit';
+            form.dataset.productId = productId;
+        } else {
+            modalTitle.textContent = 'Create New Product';
+            submitButton.textContent = 'Sell Product';
+            form.dataset.mode = 'create';
+            form.dataset.productId = '';
+            form.reset();
+        }
+
+        modal.classList.remove('hidden'); 
+        setTimeout(() => {
+            modalContent.classList.remove('opacity-0', 'scale-95');
+            modalContent.classList.add('opacity-100', 'scale-100');
+        }, 50);
+    }
+
+    function hideModal() {
+        const modal = document.getElementById('crudModal');
+        const modalContent = document.getElementById('crudModalContent');
+
+        modalContent.classList.remove('opacity-100', 'scale-100');
+        modalContent.classList.add('opacity-0', 'scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 150);
+    }
+
+    async function addProductEntry() {
+        const form = document.getElementById("productForm");
+        const mode = form.dataset.mode;
+        const productId = form.dataset.productId;   
+        const formData = new FormData(form);
+
+        let url = ''
+
+        if (mode === 'edit') {
+            url = `{% url 'main:edit_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', productId);
+        }
+        else {
+            url = "{% url 'main:create_product' %}";
+        }
+
+        const response =  await fetch(url, {
+            method: "POST",
+            body: formData,
+        })
+
+        if (response.ok) {
+            if (mode === 'edit') {
+                showToast("Product updated successfully!", "", "success");
+            }
+            else {
+                showToast("Product added successfully!", '', 'success');
+            }
+            document.dispatchEvent(new CustomEvent('productAdded'));
+            document.getElementById("productForm").reset();
+        } else {
+            showToast("An error occured.", '', "error");
+        }
+
+        hideModal();
+
+        return false;
+    }
+
+    document.getElementById("productForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        addProductEntry();
+    })
+
+</script>

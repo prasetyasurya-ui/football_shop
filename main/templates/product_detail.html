@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 {% include 'navbar.html' %}
 
@@ -8,27 +9,118 @@
 
 <div class="pt-16 min-h-screen bg-gray-50">
     <div class="max-w-7xl w-full mx-auto py-8 px-8">
-        <div class="bg-white md:flex gap-6 p-4 shadow-md border-gray-300s border">
-            <div class="w-[450px] h-[450px]">
-                {% if product.thumbnail %}
-                    <img src="{{ product.thumbnail }}" alt="a photo of {{product.name}}" class="w-full h-full object-cover">
-                {% else %}
-                    <div class="bg-gray-200 w-full h-full"></div>
-                {% endif %}
+
+        <!-- Loading State -->
+        <div id="loading-state" class="bg-white rounded-lg border border-gray-200 p-12 text-center">
+            <svg class="animate-spin h-8 w-8 text-[] inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            <p class="text-gray-600 mt-3">Loading product detail...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-state" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+            <div class="w-16 h-16 mx-auto mb-4">
+                <div class="text-red-500 text-5xl">⚠️</div>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Failed to load product</h3>
+            <p class="text-gray-500">Please try again later.</p>
+        </div>
+
+
+        <div id="product-content" class="bg-white md:flex gap-6 p-4 shadow-md border-gray-300s border">
+            <div class="md:w-[450px] md:h-[450px]">
+                <img src="" alt="" id="featured-img" class="w-full h-full object-cover">
             </div>
     
             <div class="">
-                <h1 class="font-bold text-3xl">{{ product.name }}</h1>
+                <h1 class="font-bold text-3xl" id="product-name"></h1>
                 <p class="my-2">
-                    <span class="text-gray-900">{{ product.terjual }}</span>
+                    <span class="text-gray-900" id="product-sold"></span>
                     <span class="text-gray-500">Terjual</span>
                 </p>
-                <h3 class="text-amber-400 text-4xl mb-2">Rp{{ product.price }}</h3>
+                <h3 class="text-amber-400 text-4xl mb-2" id="product-price"></h3>
                 
-                <p class="text-md text-gray-800">{{ product.description }}</p>
+                <p class="text-md text-gray-800" id="product-description">
+                </p>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    // config
+    const PRODUCT_ID = "{{ product.id }}";
+    const PRODUCT_DETAIL_ENDPOINT = `{% url 'main:show_json_by_id' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', PRODUCT_ID);
+
+    // detail...
+
+    const loadingState = document.getElementById('loading-state');
+    const errorState = document.getElementById('error-state');
+    const productDescription = document.getElementById('product-description');
+    const productName = document.getElementById('product-name');
+    const productPrice = document.getElementById('product-price');
+    const productSold = document.getElementById('product-sold');
+    const featuredImage = document.getElementById('featured-img');
+    const productContent = document.getElementById('product-content');
+
+    function showState (state) {
+        loadingState.classList.toggle('hidden', state !== "loading");
+        errorState.classList.toggle('hidden', state !== "error");
+        productContent.classList.toggle('hidden', state !== "ready");
+    }
+
+    function getCategoryName(categoryCode) {
+        const categoryMapping = {
+            baju: 'Baju',
+            celana: 'Celana',
+            topi: 'Topi',
+            sepatu: 'Sepatu',
+            update: 'Update'
+        }
+        return categoryMapping[categoryCode] || categoryCode;
+    }
+
+    function renderProduct (product) {
+        productName.textContent = product.name;
+        productPrice.textContent = "Rp" + product.price;
+        productSold.textContent = product.terjual;
+
+        if (product.thumbnail) {
+            featuredImage.src = product.thumbnail;
+            featuredImage.alt = product.thumbnail;
+            featuredImage.classList.remove("hidden");
+        }
+        else {
+            featuredImage.classList.add("hidden");
+        }
+
+        productDescription.textContent = product.description;
+    }
+
+    async function loadProductDetail() {
+        try {
+            showState('loading');
+
+            const response = await fetch(PRODUCT_DETAIL_ENDPOINT, {
+                headers: { 'Accept': 'application/json' },
+            })
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch product detail");
+            }
+
+            const productData = await response.json();
+            renderProduct(productData);
+            showState('ready');
+        } catch (error) {
+            console.error("Error loading product detail");
+            showState("error");
+        }
+    }
+
+    loadProductDetail();
+</script>
 
 {% endblock content %}

@@ -1,82 +1,100 @@
-    {% extends 'base.html' %}
-    {% load static %}
-    {% block meta %}
-    <title>Login - WolverHampton Shop</title>
-    {% endblock meta %}
+{% extends 'base.html' %}
+{% load static %}
+{% block meta %}
+<title>Login - WolverHampton Shop</title>
+{% endblock meta %}
 
-    {% block content %}
+{% block content %}
 
-    <div class="bg-gray-50 w-full min-h-screen flex items-center justify-center p-8">
-        <div class="w-full max-w-4xl z-10">
-            <div class="bg-white rounded-lg shadow-sm form-style flex border border-gray-400 overflow-hidden">
-                <div class="hidden md:block w-full">
-                    <img class="w-full h-full object-cover" src="{% static 'image/login-img.jpg' %}" alt="" srcset="">
+<div class="bg-gray-50 w-full min-h-screen flex items-center justify-center p-8">
+    <div class="w-full max-w-4xl z-10">
+        <div class="bg-white rounded-lg shadow-sm form-style flex border border-gray-400 overflow-hidden">
+            <div class="hidden md:block w-full">
+                <img class="w-full h-full object-cover" src="{% static 'image/login-img.jpg' %}" alt="" srcset="">
+            </div>
+            <div class="w-full p-6 flex flex-col">
+                <h1 class="text-center text-2xl font-bold">Sign in</h1>
+                <h3 class="text-center my-2 text-sm">Welcome back to WolverHampton Shop</h3>
+    
+                <div class="my-2" id="error-container"></div>
+    
+                <form method="POST" id="login-form" action="" class="flex flex-col gap-8">
+                    {% csrf_token %}
+                    <div class="flex flex-col mb-2">
+                        <label for="name" class="mb-2" >Username</label>
+                        <input type="text"
+                            maxlength="50"
+                            name="username"
+                            required
+                            placeholder="Enter your username"
+                            class="p-1 border px-4 py-3 rounded-md border-gray-300">
+                    </div>
+                    
+                    <div class="flex flex-col mb-2">
+                        <label for="password" class="mb-2" >Password</label>
+                        <input 
+                            type="password"
+                            name="password"
+                            id="password"
+                            placeholder="Enter your password"
+                            class="p-1 border px-4 py-3 rounded-md border-gray-300">
+            
+                    </div>
+                    <button type="submit" class="w-full bg-[#fdb913] px-3 py-3 rounded-lg font-bold hover:bg-[#e4a70d] transition-colors">Sign in</button>
+                </form>
+            
+                <div id="messages">
+                    <ul id="messages-container"></ul>
+                    <p class="mt-4 text-center p-2">Don't have an account yet?  <a href="{% url 'main:register' %}" class="text-[#fdb913] font-medium">Register Now</a></p>
                 </div>
-                <div class="w-full p-6 flex flex-col">
-                    <h1 class="text-center text-2xl font-bold">Sign in</h1>
-                    <h3 class="text-center my-2 text-sm">Welcome back to WolverHampton Shop</h3>
-        
-                    {% if form.non_field_errors %}
-                    <div class="mb-4">
-                    {% for error in form.non_field_errors %}
-                        <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700">
-                        {{ error }}
-                        </div>
-                    {% endfor %}
-                    </div>
-                    {% endif %}
-        
-                    {% if form.errors %}
-                    <div class="mb-4">
-                    {% for field, errors in form.errors.items %}
-                        {% if field != '__all__' %}
-                        {% for error in errors %}
-                            <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700 mb-2">
-                            <strong>{{ field|title }}:</strong> {{ error }}
-                            </div>
-                        {% endfor %}
-                        {% endif %}
-                    {% endfor %}
-                    </div>
-                    {% endif %}
-        
-                    <form method="POST" action="" class="space-y-8">
-                        {% csrf_token %}
-                        <div class="flex flex-col mb-2">
-                            <label for="name" class="mb-2" >Username</label>
-                            <input type="text"
-                                maxlength="50"
-                                name="username"
-                                required
-                                placeholder="Enter your username"
-                                class="p-1 border px-4 py-3 rounded-md border-gray-300">
-                        </div>
-                        
-                        <div class="flex flex-col mb-2">
-                            <label for="password" class="mb-2" >Password</label>
-                            <input 
-                                type="password"
-                                name="password"
-                                id="password"
-                                placeholder="Enter your password"
-                                class="p-1 border px-4 py-3 rounded-md border-gray-300">
-                
-                        </div>
-                        <button type="submit" class="w-full bg-[#fdb913] px-3 py-3 rounded-lg font-bold hover:bg-[#e4a70d] transition-colors">Sign in</button>
-                    </form>
-                
-                    {% if messages %}
-                    <ul>
-                        {% for message in messages %}
-                        <li>{{ message }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %} 
-                        <p class="mt-4 text-center p-2">Don't have an account yet?  <a href="{% url 'main:register' %}" class="text-[#fdb913] font-medium">Register Now</a></p>
-                    </div>
                 </div>
             </div>
         </div>
-        
+    </div>
 
-    {% endblock content %}
+<script>
+    const loginForm = document.getElementById("login-form");
+    const errorContainer = document.getElementById("error-container")
+    const LOGIN_API_ENDPOINT = "{% url 'main:login' %}"
+    
+    loginForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        errorContainer.innerHTML = '';
+        const formData = new FormData(loginForm);
+
+        try {
+            const response = await fetch(LOGIN_API_ENDPOINT, {
+                method: 'POST',
+                body: formData,
+                headers: {'Accept':'application/json' },
+            })
+
+            const data = await response.json();
+
+            if (response.ok) {
+                showToast("Login successfull!", "", "success");
+                setTimeout(() => {
+                    window.location.href = data.redirect_url;
+                }, 500)
+            } else if (data.errors) {
+                errors = data.errors;
+                for (const e in errors) {
+                    errors[e].forEach(error => {
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'px-4 py-3 text-sm border bg-red-50 border-red-200 text-red-700 mb-2';
+                        let fieldName = e.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        errorDiv.innerHTML = fieldName === '__all__' ? `${error.message}` : `<strong>${fieldName}:</strong> ${error.message}`;
+                        errorContainer.appendChild(errorDiv);
+                    });
+                }
+            }
+
+        } catch (error) {
+            console.error('Error: ', error);
+        }
+    })
+
+</script>
+    
+
+{% endblock content %}
