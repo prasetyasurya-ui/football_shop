@@ -103,39 +103,40 @@
 
         if (nav_auth) nav_auth.innerHTML = desktopHtml;
         if (nav_auth_mobile) nav_auth_mobile.innerHTML = mobileHtml;
+        
+        const logout_btns = document.querySelectorAll('.logout-btn');
+        logout_btns.forEach(btn => {
+            btn.addEventListener('click', async function (e) {
+                e.preventDefault();
+                
+                try {
+                    const response = await fetch(LOGOUT_LINK, {
+                        method: 'POST',
+                        headers: {
+                            'Accepts': 'application/json'
+                        }
+                    })
+    
+                    const data = response.json();
+    
+                    if (response.ok) {
+                        showToast("You have been logged out.", "", "success");
+    
+                        setTimeout(() => {
+                            window.location.href = LOGIN_LINK;
+                        }, 750)
+                    } else {
+                        showToast('Logout failed, please try again', "", "error");
+                    }
+                } catch (error) {
+                    console.error("Error during logout: ", error);
+                }
+    
+            })
+        })
     }
 
 
-    const logout_btns = document.querySelectorAll('.logout-btn');
-    logout_btns.forEach(btn => {
-        btn.addEventListener('click', async function (e) {
-            e.preventDefault();
-            
-            try {
-                const response = await fetch(LOGOUT_LINK, {
-                    method: 'POST',
-                    headers: {
-                        'Accepts': 'application/json'
-                    }
-                })
-
-                const data = response.json();
-
-                if (response.ok) {
-                    showToast("You have been logged out.", "", "success");
-
-                    setTimeout(() => {
-                        window.location.href = LOGIN_LINK;
-                    }, 750)
-                } else {
-                    showToast('Logout failed, please try again', "", "error");
-                }
-            } catch (error) {
-                console.error("Error during logout: ", error);
-            }
-
-        })
-    })
 
     window.addEventListener('DOMContentLoaded', initializeNavbar)
 
