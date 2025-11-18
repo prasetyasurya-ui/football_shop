@@ -9,7 +9,7 @@
 {% include 'navbar.html' %}
 
 
-<div class="pt-16 min-h-screen bg-gray-50">
+<div class="pt-16 bg-gray-50">
     <div class="max-w-7xl mx-auto py-8 px-8">
         <div class="mb-8 flex space-x-4">
             <a href="?filter=all" id="filter-all" class="px-4 py-2 rounded-md font-medium transition-colors">
@@ -24,6 +24,13 @@
                     <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
                 </svg>
             </button>
+            <a href="?sort=asc">
+                <button>ascending</button>
+            </a>
+
+            <a href="?sort=desc">
+                <button>descending</button>
+            </a>
         </div>
 
         <!-- Loading State -->
@@ -254,6 +261,9 @@
         showMyProductButton.addEventListener('click', handleShowMyProduct);
         
         fetchProductsFromServer();
+
+        console.log("{{ sort }}");
+        
     }
 
     document.addEventListener("productAdded", function() {

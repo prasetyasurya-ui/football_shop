@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-rt0*73%f^06=ob_-#ev-!q0)n^r=cf6e4@b1z*!6_c3ynrb(oh
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == True
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "prasetya-surya-footballshop.pbp.cs.ui.ac.id"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "prasetya-surya-footballshop.pbp.cs.ui.ac.id", " 10.0.2.2"]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://prasetya-surya-footballshop.pbp.cs.ui.ac.id"
@@ -45,7 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main'
+    'main',
+    'authentication',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -57,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = 'football_shop.urls'
@@ -107,6 +110,12 @@ else:
         }
     }
 
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

@@ -13,15 +13,28 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 import json
+import requests
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.html import strip_tags
+import json
+from django.http import JsonResponse
 
 @login_required(login_url='/login')
 def show_main(request):
     filter_type = request.GET.get("filter", "all")
+    sort = request.GET.get("sort", "asc")
 
+    
     if filter_type == "all":
-        product_list = Item.objects.all()
+        if sort == "asc":
+            product_list = Item.objects.all().order_by("price")
+        else:
+            product_list = Item.objects.all().order_by("-price")
     else:
-        product_list = Item.objects.filter(user=request.user)
+        if sort == "asc":
+            product_list = Item.objects.filter(user=request.user).order_by("price")
+        else:
+            product_list = Item.objects.filter(user=request.user).order_by("-price")
 
     context = {
         'shopName': "Wolverhampton Shop",
@@ -30,7 +43,8 @@ def show_main(request):
         'class': 'PBP E',
         'product_list': product_list,
         'last_login': request.COOKIES.get('last_login', 'Never'),
-        'username': request.user.username
+        'username': request.user.username,
+        'sort': sort
     }
 
     return render(request, "main.html", context)
@@ -88,6 +102,28 @@ def show_json(request):
         }
         for item in product_list
     ]
+
+    return JsonResponse(data, safe=False)
+
+@login_required
+def show_json_by_user(request):
+    product_list = Item.objects.filter(user=request.user)
+    
+    data = [
+        {
+            'id': str(item.id),
+            'name': item.name,
+            'price': item.price,
+            'description': item.description,
+            'thumbnail': item.thumbnail,
+            'category': item.category,
+            'is_featured': item.is_featured,
+            'terjual': item.terjual,
+            'user_id': item.user_id
+        }
+        for item in product_list
+    ]
+
     return JsonResponse(data, safe=False)
 
 def show_xml_by_id(request, product_id):
@@ -224,3 +260,47 @@ def get_page_data(request):
         })
     else:
         return JsonResponse({'is_authenticated': False})
+
+
+def proxy_image(request):
+    image_url = request.GET.get('url')
+    if not image_url:
+        return HttpResponse('No URL provided', status=400)
+    
+    try:
+        response = requests.get(image_url, timeout=10)
+        response.raise_for_status()
+        
+        return HttpResponse(
+            response.content,
+            content_type=response.headers.get('Content-Type', 'image/jpeg')
+        )
+    except requests.RequestException as e:
+        return HttpResponse(f'Error fetching image: {str(e)}', status=500)
+
+@csrf_exempt
+def create_product_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        name = strip_tags(data.get("name", ""))  # Strip HTML tags
+        price = data.get("price", "")
+        description = strip_tags(data.get("description", ""))  # Strip HTML tags
+        category = data.get("category", "")
+        thumbnail = data.get("thumbnail", "")
+        is_featured = data.get("is_featured", False)
+        user = request.user
+        
+        new_product = Item(
+            name=name,
+            price=price,
+            description=description,
+            category=category,
+            thumbnail=thumbnail,
+            is_featured=is_featured,
+            user=user
+        )
+        new_product.save()
+        
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)

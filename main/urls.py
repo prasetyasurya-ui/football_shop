@@ -1,5 +1,5 @@
 from django.urls import path
-from main.views import get_page_data, edit_product,delete_product,login_user, logout_user, register, show_main, create_product, show_product, show_json, show_xml, show_json_by_id, show_xml_by_id
+from main.views import show_json_by_user, create_product_flutter, proxy_image,get_page_data, edit_product,delete_product,login_user, logout_user, register, show_main, create_product, show_product, show_json, show_xml, show_json_by_id, show_xml_by_id
 
 app_name = 'main'
 
@@ -16,5 +16,8 @@ urlpatterns = [
     path('json/<str:product_id>', show_json_by_id, name='show_json_by_id'),
     path('product/<uuid:id>/edit', edit_product, name='edit_product'),
     path('product/<uuid:id>/delete', delete_product, name='delete_product'),
-    path('page-data', get_page_data, name='get_page_data')
+    path('page-data', get_page_data, name='get_page_data'),
+    path('proxy-image/', proxy_image, name='proxy_image'),
+    path('create-flutter/', create_product_flutter, name='create_product_flutter'),
+    path('json-by-user/', show_json_by_user, name='show_json_by_user'),
 ]
